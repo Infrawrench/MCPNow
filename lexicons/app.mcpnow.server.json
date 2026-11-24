@@ -1,0 +1,19 @@
+{
+  "lexicon": 1,
+  "id": "app.mcpnow.server",
+  "description": "Announces a remote MCP server. Creating or updating this record asks MCPNow to probe the server and notify registered indexes; deleting it signals removal (honoured only when the account's verified domain covers the server's host).",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "required": ["url", "createdAt"],
+        "properties": {
+          "url": { "type": "string", "format": "uri", "maxLength": 2048, "description": "HTTPS URL of the MCP server's Streamable HTTP (or legacy SSE) endpoint." },
+          "createdAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "lexicon": 1,
+  "id": "app.mcpnow.index",
+  "description": "Registers an MCPNow index: an HTTPS endpoint that receives MCP server events. The account must control a verified domain (a handle that resolves back to the DID, or a did:web), and the endpoint must be on that domain or a subdomain.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "required": ["version", "endpoint", "createdAt"],
+        "properties": {
+          "version": { "type": "string", "knownValues": ["1"], "description": "Record/payload format version. Required; there is no default." },
+          "endpoint": { "type": "string", "format": "uri", "maxLength": 2048, "description": "HTTPS webhook that receives signed event POSTs." },
+          "createdAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}

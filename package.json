@@ -1,0 +1,40 @@
+{
+  "name": "mcpnow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "IndexNow-style change notification for MCP servers, on Cloudflare Workers.",
+  "author": "Infrawrench Services, Inc.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Infrawrench/MCPNow.git"
+  },
+  "homepage": "https://mcpnow.app",
+  "bugs": {
+    "url": "https://github.com/Infrawrench/MCPNow/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:migrate:local": "wrangler d1 migrations apply mcpnow --local",
+    "db:migrate:remote": "wrangler d1 migrations apply mcpnow --remote",
+    "keygen": "node scripts/keygen.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1",
+    "wrangler": "^4.167.0"
+  },
+  "allowScripts": {
+    "workerd@1.20261123.1": true,
+    "esbuild@0.28.2": true
+  },
+  "dependencies": {
+    "marked": "^18.2.1",
+    "marked-gfm-heading-id": "^4.1.4"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mcpnow",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true, "head_sampling_rate": 1 },
+  "routes": [{ "pattern": "mcpnow.app", "custom_domain": true }],
+
+  "vars": {
+    // Public URL of this deployment; used in User-Agent and discovery docs.
+    "PUBLIC_URL": "https://mcpnow.app",
+    // Reverse-DNS of mcpnow.app. Used for the atproto lexicons
+    // (<ns>.server, <ns>.index) and the server-card _meta key (<ns>/provider).
+    "NAMESPACE": "app.mcpnow",
+    "JETSTREAM_URL": "wss://jetstream2.us-east.bsky.network/subscribe",
+    // Ignore repeat submissions of the same URL inside this window.
+    "SUBMIT_DEDUPE_SECONDS": "600",
+    // Index endpoints must live on (a subdomain of) the domain that was verified.
+    "REQUIRE_ENDPOINT_ON_DOMAIN": "true",
+    // Only for local development: allow http:// and localhost URLs.
+    "ALLOW_INSECURE_URLS": "false",
+    "EVENT_RETENTION_DAYS": "30",
+    // Re-probe known servers older than this many hours (daily cron); emits only on change.
+    "RECRAWL_AFTER_HOURS": "24"
+  },
+
+  "d1_databases": [
+    { "binding": "DB", "database_name": "mcpnow", "database_id": "REPLACE_WITH_D1_ID", "migrations_dir": "migrations" }
+  ],
+
+  "queues": {
+    "producers": [
+      { "binding": "WORK_QUEUE", "queue": "mcpnow-work" },
+      { "binding": "DELIVER_QUEUE", "queue": "mcpnow-deliver" }
+    ],
+    "consumers": [
+      {
+        "queue": "mcpnow-work",
+        "max_batch_size": 10,
+        "max_batch_timeout": 2,
+        "max_retries": 5,
+        "dead_letter_queue": "mcpnow-dlq"
+      },
+      {
+        "queue": "mcpnow-deliver",
+        "max_batch_size": 50,
+        "max_batch_timeout": 1,
+        "max_retries": 10,
+        "dead_letter_queue": "mcpnow-dlq"
+      }
+    ]
+  },
+
+  "durable_objects": {
+    "bindings": [{ "name": "JETSTREAM", "class_name": "JetstreamListener" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["JetstreamListener"] }],
+
+  "ratelimits": [
+    { "name": "SUBMIT_LIMITER", "namespace_id": "4101", "simple": { "limit": 120, "period": 60 } },
+    { "name": "REGISTER_LIMITER", "namespace_id": "4102", "simple": { "limit": 10, "period": 60 } }
+  ],
+
+  "triggers": {
+    // every minute: keep the Jetstream listener alive; daily: re-verify indexes + prune events
+    "crons": ["* * * * *", "17 4 * * *"]
+  }
+}

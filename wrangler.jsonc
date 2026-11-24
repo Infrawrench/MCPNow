@@ -26,7 +26,7 @@
   },
 
   "d1_databases": [
-    { "binding": "DB", "database_name": "mcpnow", "database_id": "REPLACE_WITH_D1_ID", "migrations_dir": "migrations" }
+    { "binding": "DB", "database_name": "mcpnow", "database_id": "6403dd41-6d92-424d-98b8-1c5514435c4b", "migrations_dir": "migrations" }
   ],
 
   "queues": {

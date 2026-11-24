@@ -346,6 +346,7 @@ The lexicon JSON is in the repository under [\`lexicons/\`](${REPO_URL}/tree/mai
 | \`GET /register_index?domain&key\` | Register or refresh a DNS-verified index |
 | \`GET /unregister_index?domain&key\` | Revoke (after the TXT record is removed) |
 | \`GET /index_status?domain&key\` | Index status and delivery health |
+| \`GET /status\` | Service health: Jetstream connection state and cursor |
 | \`GET /events\` | Event log / backfill |
 | \`GET /servers\` | History of submitted servers (not a directory) |
 | \`GET /server?url\` | Last known state of one server |

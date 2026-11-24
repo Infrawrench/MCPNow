@@ -218,6 +218,20 @@ export async function handleFetch(req: Request, env: Env): Promise<Response> {
       }
       case "GET /index_status":
         return json({ index: publicIndex(await indexStatus(env, url.searchParams.get("domain"), url.searchParams.get("key"))) });
+      case "GET /status": {
+        const js = await env.JETSTREAM.getByName("main").status();
+        const iso = (ms: number | null) => (ms ? new Date(ms).toISOString() : null);
+        return json({
+          jetstream: {
+            connected: js.connected,
+            cursor: js.cursor,
+            cursor_time: js.cursor ? iso(Math.floor(js.cursor / 1000)) : null,
+            next_alarm: iso(js.next_alarm),
+            commits_seen_since_start: js.commits_seen,
+            last_error: js.last_error,
+          },
+        });
+      }
       case "GET /events":
         return await handleEvents(env, url);
       case "GET /servers":

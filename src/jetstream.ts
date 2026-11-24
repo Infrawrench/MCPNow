@@ -31,6 +31,18 @@ export class JetstreamListener extends DurableObject<Env> {
     return { connected: this.ws !== null, cursor: this.cursor, commits_seen: this.commitsSeen, last_error: this.lastError };
   }
 
+  /** Read-only snapshot for /status. Does not open a connection. */
+  async status(): Promise<{ connected: boolean; cursor: number | null; next_alarm: number | null; commits_seen: number; last_error: string | null }> {
+    const cursor = this.cursor ?? (await this.ctx.storage.get<number>("cursor")) ?? null;
+    return {
+      connected: this.ws !== null,
+      cursor,
+      next_alarm: await this.ctx.storage.getAlarm(),
+      commits_seen: this.commitsSeen,
+      last_error: this.lastError,
+    };
+  }
+
   override async alarm(): Promise<void> {
     try {
       await this.ensureSocket();
